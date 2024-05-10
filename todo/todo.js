@@ -3,7 +3,7 @@
 const TodoSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        // required: true,
     },
     completed: {
         type: Boolean,
@@ -22,7 +22,7 @@ const TodoSchema = new mongoose.Schema({
    }, 
    currentTime: {
     type: String,
-    required: true
+    // required: true
 
    },
     
