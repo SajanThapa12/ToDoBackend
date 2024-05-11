@@ -3,8 +3,9 @@ const express = require('express');
 const connectDB = require('./db')
 const Todo = require('./todo');
 // const bodyParser = require("body-parser")
-
+ const User = require('./user');
 const app = express();
+// const bcrypt = require('becrypt');
 
 //middleware
 // app.use(cors());
@@ -69,7 +70,27 @@ app.get('/todo/:id', async(req, res) => {
     });
     res.status(201).json(savedTodo);
  });
+
  
+ app.post('/user',async(req, res) => {
+    const {username,email,address,password} = req.body;
+    try{
+        const user = new User({username, email, address, password});
+        await user.save();
+        res.status(201).json({message:'user created'});
+    } catch(error) {
+        res.status(400).json({ error: error.message});
+    }
+});
+
+// app.post('/register',async (req, res) => {
+//     const {username, password} =req.body;
+//     const hashedPassword = awaitbcrypt.hash(password, 10);
+//     users.push({username, password:hashedPassword});
+//     res.status(201).send('user registered succssfully.');
+// });
+
+
  //updates completion status of todo
  app.put('/todos/:id', async (req, res) => {
    try {
