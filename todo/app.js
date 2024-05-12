@@ -5,8 +5,8 @@ const Todo = require('./todo');
 // const bodyParser = require("body-parser")
  const User = require('./user');
 const app = express();
-// const bcrypt = require('becrypt');
-
+const path = require('path');
+// app.set('view engine', 'ejs');
 //middleware
 // app.use(cors());
 app.use(express.json());
@@ -53,6 +53,16 @@ app.get('/todo/:id', async(req, res) => {
 }
 });
 
+
+app.get('/home', async(req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    // let data = {
+    //     name : 'Intern',
+    //     hobbies: ['playing football', 'riding', 'basketball']
+    // }
+    // res.render('index', {data: data });
+});
+
 //create newtodo item with title provided
  app.post('/todos', async(req, res) => {
     const {title,description, tags, completed} = req.body; //{}
@@ -83,12 +93,6 @@ app.get('/todo/:id', async(req, res) => {
     }
 });
 
-// app.post('/register',async (req, res) => {
-//     const {username, password} =req.body;
-//     const hashedPassword = awaitbcrypt.hash(password, 10);
-//     users.push({username, password:hashedPassword});
-//     res.status(201).send('user registered succssfully.');
-// });
 
 
  //updates completion status of todo
@@ -127,7 +131,7 @@ app.patch('/todo/:id', async (req, res) => {
         console.error('Error update todo', error);
         return res.status(500).json({error: 'Internal server error'});
     }
-
+ 
 });
 
 //delete  a todoitem with given ID from db
