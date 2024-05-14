@@ -10,8 +10,9 @@
    <ul>
     <%data.forEach(function(todo){ %>
     <li>
+        <!-- <input type="checkbox" name="completed" value="true"> Completed<br> -->
         <%= todo.title %>
-        <!-- <%= todo.created_at %> -->
+        <%= todo.created_at %>
     </li>
  <% }); %>
    </ul>

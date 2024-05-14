@@ -6,17 +6,21 @@ const Todo = require('./todo');
  const User = require('./user');
 const app = express();
 const path = require('path');
-// app.set('view engine', 'ejs');
+// app.use('/form', loginRoute);
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname,'public')));
 //middleware
 // app.use(cors());
 app.use(express.json());
 
-// app.set("view engine", "ejs")
+// Middleware to parse incoming request bodies
+app.use(express.urlencoded({ extended: true }));
+
 //connect to MOngodb
 connectDB();
 
-//Routes
 
+//Routes
 app.get('/', async (req, res) => {
     const formattedTime = new Date().toLocaleTimeString();
     return res.json({
@@ -26,12 +30,25 @@ app.get('/', async (req, res) => {
     });
 })
 
+// app.get('/', (req, res) =>{
+//     res.sendFile(path.join(__dirname, 'login.ejs'));
+// });
+
+app.get('/form', async(req, res) => {
+    const title = req.body.title;
+    const description = req.body.description;
+    //  res.send(`Title: ${title} ,Description: {description} `);
+    res.render('todo', {data:description,title});
+});
+
 app.get('/todo', async(req, res) => {
     try {
         const limit = parseInt(req.query.limit) ||10;
-
-        const results = await Todo.find().limit(limit); 
-        res.status(200).json({message:`Todo fetched successfully`,results}); 
+        const results = await Todo.find() 
+         const name = "Sajan";
+        res.render('index', {data:results, name: name});
+        
+        // res.status(200).json({message:`Todo fetched successfully`,results}); 
     }    
     catch(error){
         console.error(error)
@@ -56,29 +73,30 @@ app.get('/todo/:id', async(req, res) => {
 
 app.get('/home', async(req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
-    // let data = {
-    //     name : 'Intern',
-    //     hobbies: ['playing football', 'riding', 'basketball']
-    // }
-    // res.render('index', {data: data });
+
+
+     let data = {
+         name : 'Ram',
+         hobbies: ['playing football', 'riding', 'basketball']
+     }
+     res.render('app', {data:data });
 });
 
 //create newtodo item with title provided
  app.post('/todos', async(req, res) => {
-    const {title,description, tags, completed} = req.body; //{}
-    // const newTodo = new Todo ({
-    //     title: req.body.title,
-    // });
-    // newTodo.save();
+    console.log(req.body);
+    const {title,description} = req.body; 
+//     const tasks = req.body.tasks;
+//     const completed = req.body.completed === 'on';
+
+//    // Ensure tasks is an array (if only one checkbox is checked, it will be a string)
+//    const tasksArray = Array.isArray(tasks) ? tasks : [tasks];
 
     const savedTodo = await Todo.create({
         title:title,
-        completed :completed,
-        description:"This is todo item with description.",
-        tags: ["coding", "project"],
-        currentTime: new Date(),
+        description:description,
     });
-    res.status(201).json(savedTodo);
+    res.redirect('/todo')
  });
 
  
