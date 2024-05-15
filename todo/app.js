@@ -132,7 +132,7 @@ app.get('/home', async(req, res) => {
 
 app.patch('/todo/:id', async (req, res) => {
     const { id } = req.params;
-    const {completed} = req.body;
+    const {title, completed} = req.body;
     try{
         const todo = await Todo.findById(id);
         if(!todo) {

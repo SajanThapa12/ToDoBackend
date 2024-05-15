@@ -5,16 +5,24 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
+    <form action=" /update" method=" patch">
+        <input type="hidden" name="_method" value="PUT">
+        <div>
+            <label>
+                <input type="checkbox" name="options" value="option1"> Option 1
+            </label>
+        </div>
    <h1>Todo List</h1>
    <p>Hello <%=name%></p>
    <ul>
     <%data.forEach(function(todo){ %>
-    <li>
-        <!-- <input type="checkbox" name="completed" value="true"> Completed<br> -->
-        <%= todo.title %>
+        <li>
+        <button>Done</button> <br>
+        <%= todo.title %><br>
         <%= todo.created_at %>
-    </li>
+        </li>    
  <% }); %>
    </ul>
+    </form>
 </body>
 </html>
