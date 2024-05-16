@@ -6,6 +6,9 @@ const Todo = require('./todo');
  const User = require('./user');
 const app = express();
 const path = require('path');
+const bcrypt = require('bcrypt');
+const password = require('./password');
+
 // app.use('/form', loginRoute);
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
@@ -18,7 +21,20 @@ app.use(express.urlencoded({ extended: true }));
 
 //connect to MOngodb
 connectDB();
+let users = [
+    { username: 'textuser', password:'$hfgdhjsfjkghg'},
+]
 
+const passwordToHash =  "$rhuyri467";
+
+
+bcrypt.hash(passwordToHash, function(err, hashedPassword) {
+    if (err) {
+        console.error("Error hashing password:", err);
+        return;
+    }
+    console.log("Hashed Password:", hashedPassword);
+});
 
 //Routes
 app.get('/', async (req, res) => {
@@ -112,6 +128,23 @@ app.get('/home', async(req, res) => {
 });
 
 
+app.post('/login', async (req, res) => {
+  const user = users.find(user => user.username === req.body.username);
+  if (!user) return res.status(400).send({ message: "Invalid username or password"});
+   
+  try{
+    if(await bcrypt.compare(req.body.password, user.password)) {
+        const accessToken = jwt.sign({ username: user.username });
+        res.send({ accessToken });
+    } else {
+        res.send({ message: "Invalid username or password" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Error logging in"});
+  }
+});
+
+
 
  //updates completion status of todo
  app.put('/todos/:id', async (req, res) => {
@@ -138,7 +171,7 @@ app.patch('/todo/:id', async (req, res) => {
         if(!todo) {
             return res.status(404).json({ error: 'Todo not found'});
         }
-        if (req.body.title !== undefined) {
+        if (req.body.title!== undefined) {
             todo.title = req.body.title;
         }
         if (req.body.completed != undefined)
