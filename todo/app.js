@@ -2,12 +2,13 @@ const express = require('express');
 //const cors = require('cors');
 const connectDB = require('./db')
 const Todo = require('./todo');
-// const bodyParser = require("body-parser")
- const User = require('./user');
+const bodyParser = require('body-parser')
+const User = require('./user');
 const app = express();
 const path = require('path');
-const bcrypt = require('bcrypt');
-const password = require('./password');
+const { render } = require('ejs');
+// const bcrypt = require('bcrypt');
+// const password = require('./password');
 
 // app.use('/form', loginRoute);
 app.set('view engine', 'ejs');
@@ -17,34 +18,34 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
 
 // Middleware to parse incoming request bodies
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-//connect to MOngodb
+//connect to Mongodb
 connectDB();
-let users = [
-    { username: 'textuser', password:'$hfgdhjsfjkghg'},
-]
+// let users = [
+//     { username: 'textuser', password:'$hfgdhjsfjkghg'},
+// ]
 
-const passwordToHash =  "$rhuyri467";
+// const passwordToHash =  "$rhuyri467";
 
 
-bcrypt.hash(passwordToHash, function(err, hashedPassword) {
-    if (err) {
-        console.error("Error hashing password:", err);
-        return;
-    }
-    console.log("Hashed Password:", hashedPassword);
-});
+// bcrypt.hash(passwordToHash, function(err, hashedPassword) {
+//     if (err) {
+//         console.error("Error hashing password:", err);
+//         return;
+//     }
+//     console.log("Hashed Password:", hashedPassword);
+// });
 
 //Routes
-app.get('/', async (req, res) => {
-    const formattedTime = new Date().toLocaleTimeString();
-    return res.json({
-        message:"Hello Backend",
-        currentTime: formattedTime,
+// app.get('/', async (req, res) => {
+//     const formattedTime = new Date().toLocaleTimeString();
+//     return res.json({
+//         message:"Hello Backend",
+//         currentTime: formattedTime,
     
-    });
-})
+//     });
+//})
 
 // app.get('/', (req, res) =>{
 //     res.sendFile(path.join(__dirname, 'login.ejs'));
@@ -98,6 +99,16 @@ app.get('/home', async(req, res) => {
      res.render('app', {data:data });
 });
 
+app.get('/', (res, req) => {
+    // res.sendFile(path.join(__dirname, 'views', 'login'));
+    // let data = {
+    // username :'blacktech',
+    // password : 'ewyrt674u4'
+       
+    //  }
+     res.render('login');
+});
+
 //create newtodo item with title provided
  app.post('/todos', async(req, res) => {
     console.log(req.body);
@@ -129,20 +140,20 @@ app.get('/home', async(req, res) => {
 
 
 app.post('/login', async (req, res) => {
-  const user = users.find(user => user.username === req.body.username);
-  if (!user) return res.status(400).send({ message: "Invalid username or password"});
-   
-  try{
-    if(await bcrypt.compare(req.body.password, user.password)) {
-        const accessToken = jwt.sign({ username: user.username });
-        res.send({ accessToken });
-    } else {
-        res.send({ message: "Invalid username or password" });
+    const { username, password} = req.body;
+
+    if (username === 'admin' && password === 'password') {
+        res.send('Login successful!');
+    } else{
+        res.status(400).json({message: 'error'})
     }
-  } catch (error) {
-    res.status(500).send({ error: "Error logging in"});
-  }
+    // const data = {
+    //     username: req.body.username,
+    //     password: req.body.password,
+    // };
+    // res.render('login', {data:data});
 });
+ 
 
 
 
