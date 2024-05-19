@@ -7,7 +7,8 @@ const User = require('./user');
 const app = express();
 const path = require('path');
 const { render } = require('ejs');
-// const bcrypt = require('bcrypt');
+const collection = require('./app.js')
+const bcrypt = require('bcrypt');
 // const password = require('./password');
 
 // app.use('/form', loginRoute);
@@ -63,7 +64,7 @@ app.get('/todo', async(req, res) => {
         const limit = parseInt(req.query.limit) ||10;
         const results = await Todo.find() 
          const name = "Sajan";
-        res.render('index', {data:results, name: name});
+         return res.render('index', {data:results, name: name});
         
         // res.status(200).json({message:`Todo fetched successfully`,results}); 
     }    
@@ -99,7 +100,7 @@ app.get('/home', async(req, res) => {
      res.render('app', {data:data });
 });
 
-app.get('/', (res, req) => {
+app.get('/login', (req, res) => {
     // res.sendFile(path.join(__dirname, 'views', 'login'));
     // let data = {
     // username :'blacktech',
@@ -107,6 +108,28 @@ app.get('/', (res, req) => {
        
     //  }
      res.render('login');
+});
+
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+app.post('/register', async(req, res) => {
+   try{
+     const {username, password} = req.body;
+ 
+     const existingUser = users.find(u => u.username === username);
+     if (existingUser) {
+        return res.status(400).render('register', {error: 'Username already exists'});
+
+     }
+     users.push = new User(users.length +1, username, hashedPassword);
+     users.push(newUser);
+     res.redirect('/login');
+      } catch (error) {
+        console.error('Error during registration:' , error);
+        res.status(500).render('register', { error: 'Internal server error' });
+      }
 });
 
 //create newtodo item with title provided
@@ -140,18 +163,20 @@ app.get('/', (res, req) => {
 
 
 app.post('/login', async (req, res) => {
-    const { username, password} = req.body;
+    // const { username, password} = req.body;
 
-    if (username === 'admin' && password === 'password') {
-        res.send('Login successful!');
-    } else{
-        res.status(400).json({message: 'error'})
+    // if (username === 'admin' && password === 'password') {
+    //     res.send('Login successful!');
+    // } else{
+    //     res.status(400).json({message: 'error'})
+    // }
+    const data = {
+        username: req.body.username,
+        password: req.body.password,
     }
-    // const data = {
-    //     username: req.body.username,
-    //     password: req.body.password,
-    // };
-    // res.render('login', {data:data});
+
+     await User.insertMany([data])
+     res.render("login")
 });
  
 

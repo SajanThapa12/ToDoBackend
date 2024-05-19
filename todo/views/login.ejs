@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
-    <form action="/login" method="post">
+    <form action="/todos" method="post">
         <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required><br>
+        <input style ="margin-bottom: 10px";type="text" name="username" id="username" required><br>
 
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required><br>
+        <input style ="margin-bottom: 10px;";type="password" name="password" id="password" required><br>
 
         <button type="submit">Login</button>
     </form>
-    <% if (data) { %>
-    <div>
-        <h3>Submitted Data:</h3>
-        <p>Username: <%= data.username %></p>
-        <p>Password: <%= data.password %></p>
-    </div>
-    <% } %>
+
 </body> 
 </html>
