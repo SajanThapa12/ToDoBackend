@@ -1,3 +1,5 @@
+
+
 class User {
     constructor (id, username, hashedPassword) {
         this.id = id;
@@ -5,5 +7,4 @@ class User {
         this.hashedPassword = hashedPassword;
     }
 }
-
 module.exports = User;

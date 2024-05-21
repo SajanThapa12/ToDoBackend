@@ -9,9 +9,11 @@ const path = require('path');
 const { render } = require('ejs');
 const collection = require('./app.js')
 const bcrypt = require('bcrypt');
-// const password = require('./password');
-
+// const password = require('./password')
 // app.use('/form', loginRoute);
+
+const userRouter = require('./Routes/users.js');
+
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
 //middleware
@@ -23,34 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //connect to Mongodb
 connectDB();
-// let users = [
-//     { username: 'textuser', password:'$hfgdhjsfjkghg'},
-// ]
 
-// const passwordToHash =  "$rhuyri467";
+app.use('/user',userRouter);
 
-
-// bcrypt.hash(passwordToHash, function(err, hashedPassword) {
-//     if (err) {
-//         console.error("Error hashing password:", err);
-//         return;
-//     }
-//     console.log("Hashed Password:", hashedPassword);
-// });
-
-//Routes
-// app.get('/', async (req, res) => {
-//     const formattedTime = new Date().toLocaleTimeString();
-//     return res.json({
-//         message:"Hello Backend",
-//         currentTime: formattedTime,
-    
-//     });
-//})
-
-// app.get('/', (req, res) =>{
-//     res.sendFile(path.join(__dirname, 'login.ejs'));
-// });
 
 app.get('/form', async(req, res) => {
     const title = req.body.title;
@@ -101,12 +78,6 @@ app.get('/home', async(req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    // res.sendFile(path.join(__dirname, 'views', 'login'));
-    // let data = {
-    // username :'blacktech',
-    // password : 'ewyrt674u4'
-       
-    //  }
      res.render('login');
 });
 
@@ -116,19 +87,26 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async(req, res) => {
    try{
-     const {username, password} = req.body;
+    console.log(req.body)
+     const {username, email, password} = req.body;
+     const savedUser = await User.create({
+        username:username,
+        password:password,
+        email: email,
+     });
+    //  res.redirect('/login');
  
-     const existingUser = users.find(u => u.username === username);
+     const existingUser = await User.find({username});
      if (existingUser) {
         return res.status(400).render('register', {error: 'Username already exists'});
 
      }
-     users.push = new User(users.length +1, username, hashedPassword);
-     users.push(newUser);
-     res.redirect('/login');
+     const newUser = new User(User.length +1, username, password);
+     User.push(newUser);
+    //  res.redirect('/login');
       } catch (error) {
         console.error('Error during registration:' , error);
-        res.status(500).render('register', { error: 'Internal server error' });
+        // res.status(500).render('register', { error: 'Internal server error' });
       }
 });
 
@@ -136,12 +114,6 @@ app.post('/register', async(req, res) => {
  app.post('/todos', async(req, res) => {
     console.log(req.body);
     const {title,description} = req.body; 
-//     const tasks = req.body.tasks;
-//     const completed = req.body.completed === 'on';
-
-//    // Ensure tasks is an array (if only one checkbox is checked, it will be a string)
-//    const tasksArray = Array.isArray(tasks) ? tasks : [tasks];
-
     const savedTodo = await Todo.create({
         title:title,
         description:description,
@@ -163,13 +135,7 @@ app.post('/register', async(req, res) => {
 
 
 app.post('/login', async (req, res) => {
-    // const { username, password} = req.body;
-
-    // if (username === 'admin' && password === 'password') {
-    //     res.send('Login successful!');
-    // } else{
-    //     res.status(400).json({message: 'error'})
-    // }
+   
     const data = {
         username: req.body.username,
         password: req.body.password,
