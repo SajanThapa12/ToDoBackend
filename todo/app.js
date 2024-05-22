@@ -3,7 +3,7 @@ const express = require('express');
 const connectDB = require('./db')
 const Todo = require('./todo');
 const bodyParser = require('body-parser')
-const User = require('./user');
+const User = require('./user.js')
 const app = express();
 const path = require('path');
 const { render } = require('ejs');
@@ -11,9 +11,8 @@ const collection = require('./app.js')
 const bcrypt = require('bcrypt');
 // const password = require('./password')
 // app.use('/form', loginRoute);
-
 const userRouter = require('./Routes/users.js');
-
+const { users } = require('./models/user.service.js');
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
 //middleware
@@ -36,10 +35,11 @@ app.get('/form', async(req, res) => {
     res.render('todo', {data:description,title});
 });
 
+
 app.get('/todo', async(req, res) => {
     try {
         const limit = parseInt(req.query.limit) ||10;
-        const results = await Todo.find() 
+        const results = await Todo.find(req.params) 
          const name = "Sajan";
          return res.render('index', {data:results, name: name});
         
@@ -83,6 +83,13 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render('register');
+});
+
+app.get('/user', async (req, res) => {
+    const users = await User.find({}, '-username');
+    return res.status(200).json({
+        data: users
+   })
 });
 
 app.post('/register', async(req, res) => {
@@ -134,19 +141,57 @@ app.post('/register', async(req, res) => {
 });
 
 
-app.post('/login', async (req, res) => {
+// app.post('/login', async (req, res) => {
    
-    const data = {
-        username: req.body.username,
-        password: req.body.password,
-    }
+//     const data = {
+//         username: req.body.username,
+//         password: req.body.password,
+//     }
 
-     await User.insertMany([data])
-     res.render("login")
-});
+//      await User.insertMany([data])
+//      res.render("login")
+// });
  
 
+app.post('/login', async(req, res) => {
+    const {eamil, password} = req.body;
 
+    try{
+        const user = await User.find({Email});
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid '});        
+    }
+    const isPasswordValid = await bcrypt.compare(password, User.password);
+    if (!isPasswordValid) {
+        return res.status(401).json({ error: 'Invalid'});
+    }
+
+    const token = generateToken(user);
+    return res.status(200).json({token});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({error: 'Internal server Error'});
+    }
+});
+
+function authenticate(req, res, next) {
+    const token = req.headers.authorization;
+    if(!token) {
+        return res.status(401).json({error: 'Unauthorized'});
+    }
+    try{
+        const decoded = verifyToken(token);
+        req.user = decoded.user;
+        next();
+    }catch (error) {
+        console.error(error);
+        return res.status(401).json({ error: 'Unauthorized'});
+    }
+}
+
+app.get('/protected', authenticate, (req, res) => {
+    res.json({ message: 'You are authorized'});
+});
 
  //updates completion status of todo
  app.put('/todos/:id', async (req, res) => {

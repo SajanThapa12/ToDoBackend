@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const UserService = require('../models/user.service');
-
+const User =require('../models/User');
 
 // Registration form
 router.get('/register', (req, res) => {
   res.render('register');
 });
+
 
 // Handle registration
 router.post('/register', async (req, res) => {

@@ -1,6 +1,6 @@
 
 
-class User {
+class User{
     constructor (id, username, hashedPassword) {
         this.id = id;
         this.username =username;
