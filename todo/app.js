@@ -86,9 +86,19 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/user', async (req, res) => {
-    const users = await User.find({}, '-username');
+    const users = await User.find({});
+
+    // const modifiedUsers = users.map((user) => {
+    //     return {name: user.username + " Gurung"};
+    // })
+
+    const user = users.filter((user) => {
+        return user.username !== 'Sabin'
+    })
+    // foreach , reduce, filter, 
+
     return res.status(200).json({
-        data: users
+        data: user
    })
 });
 
@@ -174,24 +184,24 @@ app.post('/login', async(req, res) => {
     }
 });
 
-function authenticate(req, res, next) {
-    const token = req.headers.authorization;
-    if(!token) {
-        return res.status(401).json({error: 'Unauthorized'});
-    }
-    try{
-        const decoded = verifyToken(token);
-        req.user = decoded.user;
-        next();
-    }catch (error) {
-        console.error(error);
-        return res.status(401).json({ error: 'Unauthorized'});
-    }
-}
+// function authenticate(req, res, next) {
+//     const token = req.headers.authorization;
+//     if(!token) {
+//         return res.status(401).json({error: 'Unauthorized'});
+//     }
+//     try{
+//         const decoded = verifyToken(token);
+//         req.user = decoded.user;
+//         next();
+//     }catch (error) {
+//         console.error(error);
+//         return res.status(401).json({ error: 'Unauthorized'});
+//     }
+// }
 
-app.get('/protected', authenticate, (req, res) => {
-    res.json({ message: 'You are authorized'});
-});
+// app.get('/protected', authenticate, (req, res) => {
+//     res.json({ message: 'You are authorized'});
+// });
 
  //updates completion status of todo
  app.put('/todos/:id', async (req, res) => {
