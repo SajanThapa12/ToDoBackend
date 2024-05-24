@@ -163,26 +163,26 @@ app.post('/register', async(req, res) => {
 // });
  
 
-app.post('/login', async(req, res) => {
-    const {eamil, password} = req.body;
+// 
+app.post('/login', (req, res) => {
+    const {email, password} = req.body;
 
-    try{
-        const user = await User.find({Email});
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid '});        
-    }
-    const isPasswordValid = await bcrypt.compare(password, User.password);
-    if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid'});
-    }
-
-    const token = generateToken(user);
-    return res.status(200).json({token});
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({error: 'Internal server Error'});
+    if (users[email] && users[email] === password) {
+        res.cookie('logged_in', 'true') 
+        res.status(200).json({message: 'Login successful' });
+    } else {
+        res.status(401).json({message:'Invalid email or password'});
     }
 });
+
+// app.get('/protected', (req, res) => {
+//     const logged_in = req.cookies.logged_in;
+//     if (logged_in === true) {
+//         res.status(200).json({message: 'Access granted'});
+//     } else {
+//         res.status(401).json({ message: 'Access denied'});
+//     }
+// });
 
 // function authenticate(req, res, next) {
 //     const token = req.headers.authorization;
