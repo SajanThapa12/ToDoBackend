@@ -9,16 +9,18 @@ const path = require('path');
 const { render } = require('ejs');
 const collection = require('./app.js')
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
 // const password = require('./password')
 // app.use('/form', loginRoute);
 const userRouter = require('./Routes/users.js');
-const { users } = require('./models/user.service.js');
+const { users, authenticateUser } = require('./models/user.service.js');
+const userService = require('./models/user.service.js');
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
 //middleware
 // app.use(cors());
 app.use(express.json());
-
+app.use(cookieParser());
 // Middleware to parse incoming request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -88,17 +90,17 @@ app.get('/register', (req, res) => {
 app.get('/user', async (req, res) => {
     const users = await User.find({});
 
-    // const modifiedUsers = users.map((user) => {
-    //     return {name: user.username + " Gurung"};
-    // })
-
-    const user = users.filter((user) => {
-        return user.username !== 'Sabin'
+    const modifiedUsers = users.map((user) => {
+        return {name: user.username + "Aryal"};
     })
-    // foreach , reduce, filter, 
+
+    // const user = users.filter((user) => {
+    //     return user.username !== 'Sabin'
+    // })
+    // // foreach , reduce, filter, 
 
     return res.status(200).json({
-        data: user
+        data: modifiedUsers
    })
 });
 
@@ -161,15 +163,23 @@ app.post('/register', async(req, res) => {
 //      await User.insertMany([data])
 //      res.render("login")
 // });
- 
-
-// 
+//
+const userss =[
+    {email : 'user1@examp.com', password:'password123'},
+    {email : 'user2@examp.com', password: 'password222'},
+];
 app.post('/login', (req, res) => {
-    const {email, password} = req.body;
 
-    if (users[email] && users[email] === password) {
-        res.cookie('logged_in', 'true') 
-        res.status(200).json({message: 'Login successful' });
+    const {email, password} = req .body;
+    const user =  userss.find(email, 'password')
+    if(user) {
+        res.cookie('logged_in', 'true',)
+        res.json({ message: 'Login successful'});
+    // }
+    // if (users[email] && users[email] === password) {
+    //     res.cookie('logged_in', 'true') 
+    //     res.send({ message: 'Login successful'});
+    //     // res.status(200).json({message: 'Login successful' });
     } else {
         res.status(401).json({message:'Invalid email or password'});
     }
