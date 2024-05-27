@@ -91,13 +91,13 @@ app.get('/user', async (req, res) => {
     const users = await User.find({});
 
     const modifiedUsers = users.map((user) => {
-        return {name: user.username + "Aryal"};
+        return {name: user.username + "Gurung"};
     })
 
     // const user = users.filter((user) => {
     //     return user.username !== 'Sabin'
     // })
-    // // foreach , reduce, filter, 
+    // foreach , reduce, filter, 
 
     return res.status(200).json({
         data: modifiedUsers
@@ -152,66 +152,17 @@ app.post('/register', async(req, res) => {
     }
 });
 
-
-// app.post('/login', async (req, res) => {
-   
-//     const data = {
-//         username: req.body.username,
-//         password: req.body.password,
-//     }
-
-//      await User.insertMany([data])
-//      res.render("login")
-// });
-//
-const userss =[
-    {email : 'user1@examp.com', password:'password123'},
-    {email : 'user2@examp.com', password: 'password222'},
-];
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
 
     const {email, password} = req .body;
-    const user =  userss.find(email, 'password')
+    const user = await User.find({email, password});
     if(user) {
         res.cookie('logged_in', 'true',)
-        res.json({ message: 'Login successful'});
-    // }
-    // if (users[email] && users[email] === password) {
-    //     res.cookie('logged_in', 'true') 
-    //     res.send({ message: 'Login successful'});
-    //     // res.status(200).json({message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful'});
     } else {
         res.status(401).json({message:'Invalid email or password'});
     }
 });
-
-// app.get('/protected', (req, res) => {
-//     const logged_in = req.cookies.logged_in;
-//     if (logged_in === true) {
-//         res.status(200).json({message: 'Access granted'});
-//     } else {
-//         res.status(401).json({ message: 'Access denied'});
-//     }
-// });
-
-// function authenticate(req, res, next) {
-//     const token = req.headers.authorization;
-//     if(!token) {
-//         return res.status(401).json({error: 'Unauthorized'});
-//     }
-//     try{
-//         const decoded = verifyToken(token);
-//         req.user = decoded.user;
-//         next();
-//     }catch (error) {
-//         console.error(error);
-//         return res.status(401).json({ error: 'Unauthorized'});
-//     }
-// }
-
-// app.get('/protected', authenticate, (req, res) => {
-//     res.json({ message: 'You are authorized'});
-// });
 
  //updates completion status of todo
  app.put('/todos/:id', async (req, res) => {
