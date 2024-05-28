@@ -91,7 +91,7 @@ app.get('/user', async (req, res) => {
     const users = await User.find({});
 
     const modifiedUsers = users.map((user) => {
-        return {name: user.username + "Gurung"};
+        return {name: user.username + "Thapa"};
     })
 
     // const user = users.filter((user) => {
