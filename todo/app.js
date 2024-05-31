@@ -202,7 +202,14 @@ app.patch('/todo/:id', async (req, res) => {
     }
  
 });
-
+app.delete('/users/:id', async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'User deleted successfully'});
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting user', error: error.message});
+    }
+});
 //delete  a todoitem with given ID from db
 app.delete('/todos/:id', async (req, res) => {
     const removeTodo = await Todo.findByIdAndDelete({_id: req.params.id});
