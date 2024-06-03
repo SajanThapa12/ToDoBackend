@@ -90,17 +90,17 @@ app.get('/register', (req, res) => {
 app.get('/user', async (req, res) => {
     const users = await User.find({});
 
-    // const modifiedUsers = users.map((user) => {
-    //     return {name: user.username + "Thapa"};
-    // })
-
-    const user = users.filter((user) => {
-        return user.username !== 'Sabin'
+    const modifiedUsers = users.map((user) => {
+        return {name: user.username + "Thapa"};
     })
+
+    // const user = users.filter((user) => {
+    //     return user.username !== 'Sabin'
+    // })
     // foreach , reduce, filter, 
 
     return res.status(200).json({
-        data: user
+        data: modifiedUsers
    })
 });
 
@@ -125,7 +125,6 @@ app.post('/register', async(req, res) => {
     //  res.redirect('/login');
       } catch (error) {
         console.error('Error during registration:' , error);
-        // res.status(500).render('register', { error: 'Internal server error' });
       }
 });
 
