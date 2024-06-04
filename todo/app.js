@@ -90,13 +90,13 @@ app.get('/register', (req, res) => {
 app.get('/user', async (req, res) => {
     const users = await User.find({});
 
-    const modifiedUsers = users.map((user) => {
-        return {name: user.username + "Thapa"};
-    })
-
-    // const user = users.filter((user) => {
-    //     return user.username !== 'Sabin'
+    // const modifiedUsers = users.map((user) => {
+    //     return {name: user.username + "Thapa"};
     // })
+
+    const user = users.filter((user) => {
+        return user.username !== 'Sabin'
+    })
     // foreach , reduce, filter, 
 
     return res.status(200).json({
